@@ -1,0 +1,24 @@
+# Render Blueprint — deploys the WHOLE app (website + API) in a few clicks.
+# In Render:  New +  →  Blueprint  →  pick your repo  →  Apply.
+# This file AND package.json must sit at the repository ROOT (top level).
+services:
+  - type: web
+    name: aw3-secret-calculator
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start          # = "node server/server.js" (set in package.json)
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true          # Render auto-creates a strong random secret
+      # ── Make your data survive (recommended) ─────────────────────────────
+      # Render's FREE disk is wiped every time the app sleeps or redeploys, so
+      # accounts/leaderboard/saves vanish unless you store them in a free
+      # Upstash Redis DB. Render will SHOW these two boxes when you Apply —
+      # paste your Upstash values in. Leave them blank to just test for now.
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
